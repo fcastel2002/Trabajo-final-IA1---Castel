@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 import pickle
 from sklearn.metrics import euclidean_distances
 
-DISPLAY_IMAGES = True  # Cambiar a False para no visualizar las imágenes
+DISPLAY_IMAGES = False  # Cambiar a False para no visualizar las imágenes
 
 def aumentar_saturacion_brillo(imagen, mask, factor_saturacion=1.03, factor_brillo=1.7):
     # Convertir la imagen a espacio de color HSV
@@ -157,7 +157,7 @@ class Analisis:
                 logging.info(f'Aplicando filtro: {filtro}')
                 if filtro == 'gaussian':
                     imagen_procesada = cv2.GaussianBlur(
-                        imagen_procesada, (13, 13), 0)
+                        imagen_procesada, (17, 17), 0)
                     self.mostrar_imagen('Filtro Gaussian', imagen_procesada)
                 elif filtro == 'gris':
                     imagen_procesada = cv2.cvtColor(
@@ -165,13 +165,19 @@ class Analisis:
                     self.mostrar_imagen('Filtro Gris', imagen_procesada)
                 elif filtro == 'binarizedADAPTIVE':
                     imagen_procesada = cv2.adaptiveThreshold(
-                        imagen_procesada, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 6)
+                         imagen_procesada, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 6)
+                    
                     self.mostrar_imagen('Binarización Adaptativa', imagen_procesada)
                 elif filtro == 'morfologico':
                     kernel = cv2.getStructuringElement(
                         cv2.MORPH_CROSS, (11, 11))
+                    imagen_procesada = cv2.morphologyEx(imagen_procesada, cv2.MORPH_DILATE, kernel)
+                    self.mostrar_imagen('Filtro Morfológico', imagen_procesada)
+
                     imagen_procesada = cv2.morphologyEx(
-                        imagen_procesada, cv2.MORPH_DILATE, kernel)
+                        imagen_procesada, cv2.MORPH_OPEN, kernel)
+                    self.mostrar_imagen('Filtro Morfológico', imagen_procesada)
+                    imagen_procesada = cv2.morphologyEx(imagen_procesada, cv2.MORPH_CLOSE, kernel)
                     self.mostrar_imagen('Filtro Morfológico', imagen_procesada)
                 elif filtro == 'contornos':
                     contornos = cv2.findContours(
