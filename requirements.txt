@@ -1,0 +1,13 @@
+flask
+tkinter
+matplotlib
+scikit-learn
+pandas
+numpy
+librosa
+pydub
+umap-learn
+opencv-python
+sounddevice
+PIL
+soundfile

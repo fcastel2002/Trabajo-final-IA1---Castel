@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io.wavfile import write
 import time
 import os
-import keyboard  # Add this import to detect key presses
+import keyboard  
 from pydub import AudioSegment
 import random
 
@@ -14,7 +14,7 @@ class AudiosRaw:
         self.audio = None
         self.start_time = None
         self.counter = 0
-        self.folder_path = '../anexos/berenjena'
+        self.folder_path = ''
         self.path_raw = audio_path
         if not os.path.exists(self.folder_path):
             os.makedirs(self.folder_path)
