@@ -6,7 +6,7 @@ import threading
 from DataBaseImg import ProcesadorImagen
 from AnalisisCaracteristicasImages import realizar_analisis_caracteristicas
 from KMeansClustering import KmeansClustering, run_clustering
-from prediccion import Analisis, Predictor
+from PrediccionImage import Analisis, Predictor
 def main():
     # Crear la ventana principal
     root = tk.Tk()
@@ -61,7 +61,7 @@ def main():
 
             filtros_a_aplicar = ['gaussian', 'gris', 'binarizedADAPTIVE', 'morfologico', 'contornos']
             momentos_elegidos = [2, 3]
-            ruta_csv = 'predicciones.csv'
+            ruta_csv = '../runtime_files/predicciones.csv'
 
             resultados = analisis.procesar_carpeta(ruta_carpeta, filtros_a_aplicar, momentos_elegidos, ruta_csv)
             if not resultados:

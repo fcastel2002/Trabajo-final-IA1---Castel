@@ -1,4 +1,4 @@
-from prediccion import *
+from PrediccionImage import *
 from AudioDatabase import *
 from FiltradoAudio import *
 from KNNPredictor import *
@@ -32,7 +32,7 @@ class UserInterface:
         self.carpeta_crudos = carpeta_crudos
         self.carpeta_prefiltrados = carpeta_prefiltrados
         self.database = DataBase(
-            self.carpeta_prefiltrados, 'audios_features.csv')
+            self.carpeta_prefiltrados, '../runtime_files/audios_features.csv')
         self.filtrado = Filtrado(
             self.carpeta_crudos, self.carpeta_prefiltrados)
         self.grabacion = AudiosRaw(self.carpeta_crudos)
@@ -123,14 +123,14 @@ class UserInterface:
         self.knn.ajustar(features.values, etiquetas.values)
         puntos, labels = self.leer_features_nuevas()  # Nuevos puntos a predecir
         puntos = puntos.values  # Convertimos a array numpy
-        with open('scaler_umap.pkl', 'rb') as file:
+        with open('../runtime_files/scaler_umap.pkl', 'rb') as file:
             scaler = pickle.load(file)
         puntos = scaler.transform(puntos)
 
         print(f"Puntos shape: {puntos.shape}")
 
         # Cargar modelo umap_audio previamente ajustado
-        with open("umap_audio.pkl", "rb") as file:
+        with open("../runtime_files/umap_audio.pkl", "rb") as file:
             umap_audio = pickle.load(file)
 
         # Transformar los puntos con UMAP
@@ -174,14 +174,14 @@ class UserInterface:
         label_img.pack()
 
     def leer_features_nuevas(self):
-        df = pd.read_csv("audios_features.csv")
+        df = pd.read_csv("../runtime_files/audios_features.csv")
         etiquetas = df["Etiqueta"]
         features = df.drop(columns=["Etiqueta"])
 
         return features, etiquetas
 
     def leer_db_audios(self):
-        df = pd.read_csv("FINAL_DB.csv")
+        df = pd.read_csv("../runtime_files/FINAL_DB.csv")
         etiquetas = df["Etiqueta"]
         features = df.drop(columns=["Etiqueta"])
         return features, etiquetas

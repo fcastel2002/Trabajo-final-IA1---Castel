@@ -14,10 +14,8 @@ class AudiosRaw:
         self.audio = None
         self.start_time = None
         self.counter = 0
-        self.folder_path = ''
         self.path_raw = audio_path
-        if not os.path.exists(self.folder_path):
-            os.makedirs(self.folder_path)
+        
         sd.default.blocksize = 1024
 
     def grabar(self):
@@ -65,22 +63,4 @@ class AudiosRaw:
                 print("Saliendo...")
                 break
 
-    def renombrar_archivos(self, nuevo_prefijo="berenjena"):
-        archivos = [f for f in os.listdir(
-            self.folder_path) if f.endswith('.wav') or f.endswith('.m4a')]
-        for idx, archivo in enumerate(archivos, start=7):
-            if archivo.endswith(".wav"):
-                nueva_nombre = f"{nuevo_prefijo}_{idx}.wav"
-                os.rename(
-                    os.path.join(self.folder_path, archivo),
-                    os.path.join(self.folder_path, nueva_nombre)
-                )
-                print(f"Renombrado: {archivo} a {nueva_nombre}")
-            elif archivo.endswith(".m4a"):
-                nueva_nombre = f"{nuevo_prefijo}_{idx}.wav"
-                ruta_archivo = os.path.join(self.folder_path, archivo)
-                ruta_nueva = os.path.join(self.folder_path, nueva_nombre)
-                audio = AudioSegment.from_file(ruta_archivo, format="m4a")
-                audio.export(ruta_nueva, format="wav")
-                os.remove(ruta_archivo)
-                print(f"Convertido y renombrado: {archivo} a {nueva_nombre}")
+   

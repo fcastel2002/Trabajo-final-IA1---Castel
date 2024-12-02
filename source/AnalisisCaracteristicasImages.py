@@ -8,7 +8,7 @@ import pickle
 from umap import UMAP
 
 def realizar_analisis_caracteristicas():
-    data = pd.read_csv('resultados.csv')
+    data = pd.read_csv('../runtime_files/resultados.csv')
     print(data.head())
     print(data.columns)
     data.columns = data.columns.str.strip()
@@ -23,16 +23,16 @@ def realizar_analisis_caracteristicas():
     scaler = StandardScaler()
 
     X_scaled = scaler.fit_transform(X)
-    with open('scaler_images.pkl', 'wb') as f:
+    with open('../runtime_files/scaler_images.pkl', 'wb') as f:
         pickle.dump(scaler, f)
 
         # Guardar las features escaladas en un archivo .csv
     scaled_features_df = pd.DataFrame(data=X_scaled, columns=features_header)
-    scaled_features_df.to_csv('scaled_features.csv', index=False)
+    scaled_features_df.to_csv('../runtime_files/scaled_features.csv', index=False)
 
     umap = UMAP(n_components=3)
     X_umap = umap.fit_transform(X_scaled)
-    with open('umap_images.pkl', 'wb') as f:
+    with open('../runtime_files/umap_images.pkl', 'wb') as f:
         pickle.dump(umap, f)
     umap_df = pd.DataFrame(data=X_umap, columns=['UMAP1', 'UMAP2', 'UMAP3'])
     umap_df['Nombre'] = data['Nombre']  # Add class labels to the UMAP dataframe
@@ -73,6 +73,6 @@ def realizar_analisis_caracteristicas():
     ax.set_zlabel('UMAP3')
 
     # Guardar los resultados del UMAP en un archivo .csv
-    umap_df.to_csv('umap_resultados.csv', index=False)
+    umap_df.to_csv('../runtime_files/umap_resultados.csv', index=False)
 
     plt.show()

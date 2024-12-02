@@ -112,7 +112,7 @@ class Analisis:
         ventana = tk.Tk()
         ventana.withdraw()
         archivo = filedialog.askopenfilename(
-            initialdir='../anexos/imagenes_correctas',
+            initialdir='../anexos',
             title='Seleccione la imagen a analizar',
             filetypes=[('Image Files', '*.png *.jpg *.jpeg')]
         )
@@ -188,7 +188,7 @@ class Analisis:
         
     def mostrar_resultados(self,resultados, predictor):
         try:
-            clustering_df = pd.read_csv('resultados_clustering.csv')
+            clustering_df = pd.read_csv('../runtime_files/resultados_clustering.csv')
             cluster_label_map = dict(zip(clustering_df['Cluster'], clustering_df['label']))
             max_cluster = clustering_df['Cluster'].max()
             etiquetas = [cluster_label_map.get(i, f"Cluster {i}") for i in range(max_cluster + 1)]
@@ -227,7 +227,7 @@ class Analisis:
         filtros_a_aplicar = ['gaussian', 'gris',
                             'binarizedADAPTIVE', 'morfologico', 'contornos']
         momentos_elegidos = [2, 3]
-        ruta_csv = 'predicciones.csv'
+        ruta_csv = '../runtime_files/predicciones.csv'
 
         resultados = self.procesar_carpeta(
             ruta_carpeta, filtros_a_aplicar, momentos_elegidos, ruta_csv)
@@ -250,7 +250,7 @@ class Estandarizacion:
 
 class Predictor:
     def __init__(self):
-        self.centroides_df = pd.read_csv('centroides.csv')
+        self.centroides_df = pd.read_csv('../runtime_files/centroides.csv')
         # Omitir columna 'Cluster'
         self.centroides = self.centroides_df.iloc[:, 1:].values
         print(self.centroides)
@@ -258,9 +258,9 @@ class Predictor:
         print(self.clusters)
         # Cargar el StandardScaler y PCA entrenados
 
-        with open('umap_images.pkl', 'rb') as f:
+        with open('../runtime_files/umap_images.pkl', 'rb') as f:
             self.pca = pickle.load(f)
-        with open('scaler_images.pkl', 'rb') as f:
+        with open('../runtime_files/scaler_images.pkl', 'rb') as f:
             self.scaler = pickle.load(f)
     def predecir_cluster(self, features):
         try:
@@ -272,7 +272,7 @@ class Predictor:
             features_estandarizadas = self.scaler.transform(features_df)
             #print(f"features std:{features_estandarizadas}")
             pd.DataFrame(features_estandarizadas).to_csv(
-                'features_estandarizadas.csv', index=True)
+                '../runtime_files/features_estandarizadas.csv', index=True)
             # Aplicar PCA utilizando el modelo entrenado
             features_pca = self.pca.transform(features_estandarizadas)
             # Calcular distancias y encontrar el clúster más cercano

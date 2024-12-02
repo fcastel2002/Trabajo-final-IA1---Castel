@@ -15,7 +15,8 @@ El proyecto aborda el reconocimiento de objetos y audio mediante la implementaci
 
 - **`source/`**: Contiene el código fuente principal del proyecto, organizado en módulos para cada agente y sus respectivas funcionalidades.
 
-- **`anexos/`**: Incluye documentación adicional, como informes técnicos y resultados experimentales.
+- **`anexos/`**: Esta carpeta contiene las diferentes carpetas con imagenes y audios
+- **`runtime_files/`** : Esta carpeta contiene todos los archivos utilizados durantes la ejecución del programa general, como la base de datos de los audios `FINAL_DB` y los centroides obtenidos para el clasificador de imágenes `centroides.csv`. También contiene arhivos secundarios generados durante la etapa de aprendizaje.
 
 - **`README.md`**: Este archivo, que proporciona una visión general del proyecto y su estructura.
 
