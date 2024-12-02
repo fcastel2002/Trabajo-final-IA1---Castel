@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 import pickle
 from sklearn.metrics import euclidean_distances
 
+DISPLAY_IMAGES = True  # Cambiar a False para no visualizar las imágenes
 
 def aumentar_saturacion_brillo(imagen, mask, factor_saturacion=1.03, factor_brillo=1.7):
     # Convertir la imagen a espacio de color HSV
@@ -119,6 +120,26 @@ class Analisis:
         ventana.destroy()
         return archivo
 
+    def mostrar_imagen(self, titulo, imagen):
+        if DISPLAY_IMAGES:
+            # Redimensionar la imagen para mostrarla
+            max_width = 800
+            max_height = 600
+            height, width = imagen.shape[:2]
+            scaling_factor = min(max_width / width, max_height / height)
+            new_size = (int(width * scaling_factor), int(height * scaling_factor))
+            imagen_redimensionada = cv2.resize(imagen, new_size)
+            # Convertir la imagen a RGB para mostrarla con PIL
+            imagen_rgb = cv2.cvtColor(imagen_redimensionada, cv2.COLOR_BGR2RGB)
+            imagen_pil = Image.fromarray(imagen_rgb)
+            imagen_tk = ImageTk.PhotoImage(imagen_pil)
+            ventana = tk.Toplevel()
+            ventana.title(titulo)
+            etiqueta_imagen = tk.Label(ventana, image=imagen_tk)
+            etiqueta_imagen.image = imagen_tk
+            etiqueta_imagen.pack()
+            ventana.wait_window()
+           
     def procesar_imagen(self, ruta_imagen, filtros_a_aplicar, momentos_elegidos, ruta_csv):
         import logging
         # Configurar logging
@@ -137,17 +158,21 @@ class Analisis:
                 if filtro == 'gaussian':
                     imagen_procesada = cv2.GaussianBlur(
                         imagen_procesada, (13, 13), 0)
+                    self.mostrar_imagen('Filtro Gaussian', imagen_procesada)
                 elif filtro == 'gris':
                     imagen_procesada = cv2.cvtColor(
                         imagen_procesada, cv2.COLOR_BGR2GRAY)
+                    self.mostrar_imagen('Filtro Gris', imagen_procesada)
                 elif filtro == 'binarizedADAPTIVE':
                     imagen_procesada = cv2.adaptiveThreshold(
                         imagen_procesada, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 6)
+                    self.mostrar_imagen('Binarización Adaptativa', imagen_procesada)
                 elif filtro == 'morfologico':
                     kernel = cv2.getStructuringElement(
                         cv2.MORPH_CROSS, (11, 11))
                     imagen_procesada = cv2.morphologyEx(
                         imagen_procesada, cv2.MORPH_DILATE, kernel)
+                    self.mostrar_imagen('Filtro Morfológico', imagen_procesada)
                 elif filtro == 'contornos':
                     contornos = cv2.findContours(
                         imagen_procesada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -159,11 +184,18 @@ class Analisis:
                             imagen_original.shape[:2], dtype=np.uint8)
                         cv2.drawContours(
                             mask, [max_contorno], -1, 255, thickness=cv2.FILLED)
+                        # Dibujar los contornos sobre la imagen original
+                        imagen_con_contornos = cv2.drawContours(
+                            imagen_original.copy(), [max_contorno], -1, (255, 0, 0), 5)
+                        self.mostrar_imagen('Contornos', imagen_con_contornos)
+                        
                         # Calcular momentos de Hu y color promedio
                         hu_momentos = calcular_momentos_hu(
                             max_contorno, momentos_elegidos)
                         imagen_pospro = aumentar_saturacion_brillo(
                             imagen_original, mask)
+                        self.mostrar_imagen('Saturación y Brillo Aumentados', imagen_pospro)
+                        
                         mean_color = calcular_color_promedio(
                             imagen_pospro, mask)
                         # Guardar resultados en CSV
@@ -172,8 +204,6 @@ class Analisis:
                         guardar_momentos_hu(
                             ruta_csv, 'Imagen', hu_momentos, mean_color, encabezado)
                         # Retornar características para predicción
-                        # Replace cv2.imshow, cv2.waitKey, and cv2.destroyAllWindows with Tkinter window
-
                         return np.array(hu_momentos + list(mean_color))
                     else:
                         logging.warning(
