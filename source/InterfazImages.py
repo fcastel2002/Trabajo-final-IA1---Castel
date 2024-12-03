@@ -7,6 +7,7 @@ from DataBaseImg import ProcesadorImagen
 from AnalisisCaracteristicasImages import realizar_analisis_caracteristicas
 from KMeansClustering import KmeansClustering, run_clustering
 from PrediccionImage import Analisis, Predictor
+from EficienciaImg import calcular_eficiencia
 def main():
     # Crear la ventana principal
     root = tk.Tk()
@@ -73,11 +74,19 @@ def main():
 
         threading.Thread(target=run_prediccion).start()
 
+    def ejecutar_comprobacion_eficiencia():
+        try:
+            calcular_eficiencia('../runtime_files/predicciones.csv')
+            messagebox.showinfo("Éxito", "Comprobación de eficiencia completada.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al ejecutar la comprobación de eficiencia: {e}")
+
     # Crear botones para cada funcionalidad
     btn_procesar = tk.Button(root, text='Procesar Imágenes', command=procesar_imagenes, width=30, height=2)
     btn_analisis = tk.Button(root, text='Análisis de Características', command=realizar_analisis, width=30, height=2)
     btn_clustering = tk.Button(root, text='Realizar Clustering', command=realizar_clustering, width=30, height=2)
     btn_predecir = tk.Button(root, text='Predicción', command=predecir, width=30, height=2)
+    btn_comprobar = tk.Button(root, text='Comprobar Eficiencia', command=ejecutar_comprobacion_eficiencia, width=30, height=2)
     btn_salir = tk.Button(root, text='Salir', command=root.quit, width=30, height=2)
 
     # Ubicar los botones en la ventana
@@ -85,6 +94,7 @@ def main():
     btn_analisis.pack(pady=5)
     btn_clustering.pack(pady=5)
     btn_predecir.pack(pady=5)
+    btn_comprobar.pack(pady=5)
     btn_salir.pack(pady=5)
 
     root.mainloop()

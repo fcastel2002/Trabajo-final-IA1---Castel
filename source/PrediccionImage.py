@@ -12,6 +12,7 @@ import tkinter as tk
 from sklearn.preprocessing import StandardScaler
 import pickle
 from sklearn.metrics import euclidean_distances
+import csv
 
 DISPLAY_IMAGES = False  # Cambiar a False para no visualizar las imágenes
 
@@ -76,7 +77,8 @@ class Analisis:
                 features = self.procesar_imagen(
                     ruta_completa, filtros_a_aplicar, momentos_elegidos, ruta_csv)
                 if features is not None:
-                    resultados.append((archivo, features))
+                    hu_momentos, mean_color = features
+                    resultados.append((archivo, hu_momentos, mean_color))
         return resultados
 
     def seleccionar_imagen(self):
@@ -164,6 +166,7 @@ class Analisis:
                         imagen_procesada, cv2.COLOR_BGR2GRAY)
                     self.mostrar_imagen('Filtro Gris', imagen_procesada)
                 elif filtro == 'binarizedADAPTIVE':
+                    # imagen_procesada = cv2.threshold(imagen_procesada, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
                     imagen_procesada = cv2.adaptiveThreshold(
                          imagen_procesada, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 6)
                     
@@ -204,13 +207,8 @@ class Analisis:
                         
                         mean_color = calcular_color_promedio(
                             imagen_pospro, mask)
-                        # Guardar resultados en CSV
-                        encabezado = [
-                            'Nombre'] + [f'Hu{i}' for i in momentos_elegidos] + ['Mean_B', 'Mean_G', 'Mean_R']
-                        guardar_momentos_hu(
-                            ruta_csv, 'Imagen', hu_momentos, mean_color, encabezado)
                         # Retornar características para predicción
-                        return np.array(hu_momentos + list(mean_color))
+                        return hu_momentos, mean_color
                     else:
                         logging.warning(
                             "No se encontraron contornos en la imagen.")
@@ -237,12 +235,15 @@ class Analisis:
         print("-"*50)
 
         clasificaciones = {}
-        for archivo, features in resultados:
+        for archivo, hu_momentos, mean_color in resultados:
+            features = np.concatenate((hu_momentos, mean_color))
             cluster = predictor.predecir_cluster(features)
             if cluster is not None:
                 etiqueta = etiquetas[cluster]
                 self.resultados_prediccion.append((archivo, etiqueta))
                 print(f"{archivo:<30} {etiqueta:<20}")
+                guardar_prediccion(archivo, etiqueta, hu_momentos[0], hu_momentos[1],
+                                   mean_color[0], mean_color[1], mean_color[2])
                 if etiqueta not in clasificaciones:
                     clasificaciones[etiqueta] = 0
                 clasificaciones[etiqueta] += 1
@@ -321,5 +322,23 @@ class Predictor:
         except Exception as e:
             print(f"Error al predecir el clúster: {e}")
             return None
+
+def guardar_prediccion(image_path, prediccion, hu2, hu3, mean_b, mean_g, mean_r):
+    nombre_archivo = os.path.basename(image_path)
+    nombre_archivo = nombre_archivo.split('_')[0]
+    etiqueta = prediccion
+    ruta_csv = '../runtime_files/predicciones.csv'
+    encabezado = ['Nombre_archivo', 'Hu2', 'Hu3', 'Mean_B', 'Mean_G', 'Mean_R', 'Etiqueta']
+    
+    # Check if the CSV file exists; if not, create it with the header
+    if not os.path.exists(ruta_csv):
+        with open(ruta_csv, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(encabezado)
+    
+    # Append the prediction data
+    with open(ruta_csv, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([nombre_archivo, hu2, hu3, mean_b, mean_g, mean_r, etiqueta])
 
 

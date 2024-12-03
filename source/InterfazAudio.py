@@ -22,10 +22,11 @@ class Interfaz:
             print("\n--- Menú Principal ---")
             print("1. Filtrar y normalizar audios")
             print("2. Extraer características")
-            print("3. Análisis PCA")
-            print("4. Predicción KNN")
-            print("5. Persistir base de datos filtrada")
-            print("5. Salir")
+            print("3. Reduccion de dimensionalidad (UMAP)")
+            print("4. Comprobar eficiencia (70% entrenamiento, 30% prueba")
+            print("5. Persistir base de datos filtrada  (NECESARIO PARA ENTRENAMIENTO)")
+            print("6. Ayuda")
+            print("7. Salir")
 
             opcion = input("Seleccione una opción: ")
 
@@ -73,9 +74,19 @@ class Interfaz:
             elif opcion == "5":
                 print("Persistiendo base de datos filtrada...")
                 self.PCA_analisis.guardar_dataframe_filtrado(
-                    "FINAL_DB.csv", self.eps_, self.min_samples_)
+                    "audio_database_3D.csv")
 
             elif opcion == "6":
+                print('====================================================================')
+                print("Para entrenar el modelo debe seguir los siguientes pasos:")
+                print("TODOS LOS AUDIOS SERÁN TOMADOS DESDE LA CARPETA anexos/test_raw_v2")
+                print("1. Filtrar y normalizar audios")
+                print("2. Extraer características")
+                print("3. Reduccion de dimensionalidad (UMAP)")
+                print("5. Persistir base de datos filtrada  (NECESARIO PARA ENTRENAMIENTO)")
+                print('====================================================================')
+ 
+            elif opcion == "7":
                 print("Saliendo del programa...")
                 break
 

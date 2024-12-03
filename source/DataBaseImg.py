@@ -84,6 +84,10 @@ class ProcesadorImagen:
                 elif filtro == 'morfologico':
                     kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (11,11))
                     imagen_procesada = cv2.morphologyEx(imagen_procesada, cv2.MORPH_DILATE, kernel)
+                    imagen_procesada = cv2.morphologyEx(imagen_procesada, cv2.MORPH_OPEN, kernel)
+
+                    imagen_procesada = cv2.morphologyEx(imagen_procesada, cv2.MORPH_CLOSE, kernel)
+
 
                 elif filtro == 'contornos':
                     contornos = cv2.findContours(imagen_procesada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

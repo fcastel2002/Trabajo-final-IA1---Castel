@@ -181,7 +181,7 @@ class UserInterface:
         return features, etiquetas
 
     def leer_db_audios(self):
-        df = pd.read_csv("../runtime_files/FINAL_DB.csv")
+        df = pd.read_csv("../runtime_files/audio_database_3D.csv")
         etiquetas = df["Etiqueta"]
         features = df.drop(columns=["Etiqueta"])
         return features, etiquetas

@@ -159,26 +159,26 @@ class DataBase:
         except Exception as e:
             print("Error al estandarizar la base de datos: ", e)
 
-    def normalizar_database(self):
-        try:
-            csv_file_normalized = 'caracteristicas_normalized.csv'
-            if os.path.exists(csv_file_normalized):
-                os.remove(csv_file_normalized)
+    # def normalizar_database(self):
+    #     try:
+    #         csv_file_normalized = 'caracteristicas_normalized.csv'
+    #         if os.path.exists(csv_file_normalized):
+    #             os.remove(csv_file_normalized)
 
-            # Cargar base de datos original
-            data = pd.read_csv(self.csv_file)
-            etiquetas = data.pop('Etiqueta')
+    #         # Cargar base de datos original
+    #         data = pd.read_csv(self.csv_file)
+    #         etiquetas = data.pop('Etiqueta')
 
-            # Normalizar características
-            data = (data - data.min()) / (data.max() - data.min())
+    #         # Normalizar características
+    #         data = (data - data.min()) / (data.max() - data.min())
 
-            # Agregar etiquetas nuevamente
-            data['Etiqueta'] = etiquetas
+    #         # Agregar etiquetas nuevamente
+    #         data['Etiqueta'] = etiquetas
 
-            # Guardar archivo normalizado
-            with open(csv_file_normalized, 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(self.header)
-                writer.writerows(data.values)
-        except Exception as e:
-            print("Error al normalizar la base de datos: ", e)
+    #         # Guardar archivo normalizado
+    #         with open(csv_file_normalized, 'w', newline='') as file:
+    #             writer = csv.writer(file)
+    #             writer.writerow(self.header)
+    #             writer.writerows(data.values)
+    #     except Exception as e:
+    #         print("Error al normalizar la base de datos: ", e)

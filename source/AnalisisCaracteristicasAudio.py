@@ -142,7 +142,7 @@ class AnalisisPCA:
             print("Error al calcular y filtrar por importancia:", e)
             return features
 
-    def analisis_pca_con_outliers(self, distancia_min, min_muestras):
+    def analisis_pca_con_outliers(self, distancia_min=20, min_muestras=15):
         try:
             # Cargar y preparar datos
             df = pd.read_csv(self.database.csv_file)
